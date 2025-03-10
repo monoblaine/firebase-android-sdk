@@ -16,6 +16,7 @@ plugins {
     id 'com.google.protobuf'
     id 'firebase-library'
     id("kotlin-android")
+    id("com.dorongold.task-tree") version "4.0.1"
 }
 configurations.create("protobuild")
 
