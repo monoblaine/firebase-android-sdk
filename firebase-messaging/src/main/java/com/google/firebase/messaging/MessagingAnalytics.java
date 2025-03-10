@@ -76,10 +76,6 @@ public class MessagingAnalytics {
 
   /** Log that a notification was received by the client app. */
   public static void logNotificationReceived(Intent intent) {
-    if (shouldUploadScionMetrics(intent)) {
-      logToScion(ScionAnalytics.EVENT_NOTIFICATION_RECEIVE, intent.getExtras());
-    }
-
     if (shouldUploadFirelogAnalytics(intent)) {
       logToFirelog(
           MessagingClientEvent.Event.MESSAGE_DELIVERED,
@@ -90,13 +86,10 @@ public class MessagingAnalytics {
 
   /** Log that a notification was opened. */
   public static void logNotificationOpen(Bundle extras) {
-    setUserPropertyIfRequired(extras);
-    logToScion(ScionAnalytics.EVENT_NOTIFICATION_OPEN, extras);
   }
 
   /** Log that a notification was dismissed. */
   public static void logNotificationDismiss(Intent intent) {
-    logToScion(ScionAnalytics.EVENT_NOTIFICATION_DISMISS, intent.getExtras());
   }
 
   /**
@@ -105,7 +98,6 @@ public class MessagingAnalytics {
    * <p>In this case, onMessageReceived() is invoked instead of showing a notification to the user.
    */
   public static void logNotificationForeground(Intent intent) {
-    logToScion(ScionAnalytics.EVENT_NOTIFICATION_FOREGROUND, intent.getExtras());
   }
 
   /** check whether we should upload metrics data to scion. */
