@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -x
+
+version=$1
+
+if [ -z "$version" ]; then
+    echo Please specify the version.
+    exit 1
+fi
+
+version_suffixed=$1-defused
+path_to_project_in_target="~/Desktop/.remote/dart/flutterfire/packages/firebase_messaging/firebase_messaging"
+path_to_aars_in_target="$path_to_project_in_target/example/android/app/local_aars/com/google/firebase"
+
+../gradlew clean &&
+../gradlew assembleRelease ktx:assembleRelease &&
+ssh $WIN " \
+    cd $path_to_aars_in_target &&
+    rm -rf firebase-messaging &&
+    rm -rf firebase-messaging-ktx &&
+    mkdir firebase-messaging &&
+    mkdir firebase-messaging-ktx &&
+    mkdir firebase-messaging/$version_suffixed &&
+    mkdir firebase-messaging-ktx/$version_suffixed" &&
+scp build/outputs/aar/*.aar $WIN:$path_to_aars_in_target/firebase-messaging/$version_suffixed/firebase-messaging-$version_suffixed.aar &&
+scp ktx/build/outputs/aar/*.aar $WIN:$path_to_aars_in_target/firebase-messaging-ktx/$version_suffixed/firebase-messaging-ktx-$version_suffixed.aar &&
+ssh $WIN " \
+    cd $path_to_project_in_target &&
+    ./patch_pom_files.sh $version"
