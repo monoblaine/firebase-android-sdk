@@ -491,8 +491,15 @@ public final class CommonNotificationBuilder {
               + " Default value will be used.");
     }
 
+    int channelIdResourceId = context
+      .getResources()
+      .getIdentifier(FCM_FALLBACK_NOTIFICATION_CHANNEL, "string", context.getPackageName());
+    String defaultChannelId = channelIdResourceId == ILLEGAL_RESOURCE_ID
+      ? FCM_FALLBACK_NOTIFICATION_CHANNEL
+      : context.getString(channelIdResourceId);
+
     // Create the default channel if it has not been created yet.
-    if (notificationManager.getNotificationChannel(FCM_FALLBACK_NOTIFICATION_CHANNEL) == null) {
+    if (notificationManager.getNotificationChannel(defaultChannelId) == null) {
       int channelLabelResourceId =
           context
               .getResources()
@@ -514,14 +521,14 @@ public final class CommonNotificationBuilder {
       notificationManager.createNotificationChannel(
           new NotificationChannel(
               // channel id
-              FCM_FALLBACK_NOTIFICATION_CHANNEL,
+              defaultChannelId,
               // user visible name of the channel
               defaultChannelName,
               // shows everywhere, makes noise, but does not visually intrude.
               NotificationManager.IMPORTANCE_DEFAULT));
     }
 
-    return FCM_FALLBACK_NOTIFICATION_CHANNEL;
+    return defaultChannelId;
   }
 
   /**
